@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>资源分享网</title>
+    <link rel="shortcut icon" href="/static/foreground/images/logomin.png" type="images/x-icon"/>
+    <link rel="stylesheet" href="/static/foreground/layui/css/layui.css"/>
+    <link rel="stylesheet" href="/static/foreground/css/global.css"/>
+    <script src="/static/js/jquery-1.8.3.min.js"></script>
+    <script src="/static/layui/layui.js"></script>
+    <script src="/static/js/index.js"></script>
+    <script src="/static/js/unUsefulArticleManage.js"></script>
+</head>
+<body>
+<div th:replace="common/header::#h"></div>
+<div class="layui-container fly-marginTop fly-user-main">
+    <div th:replace="common/left::#l"></div>
+    <div class="fly-panel fly-panel-user" pad20>
+        <div class="layui-tab layui-tab-brief" lay-filter="user">
+            <div class="layui-tab-content" style="padding: 20px 0;">
+                <div class="layui-tab-item layui-show">
+
+                    <ul class="home-jieda">
+                        <li th:each="message :${messageList}">
+                            <p>
+                                <span th:text="${#dates.format(message.publishDate,'yyyy-MM-dd HH:mm')}"></span>
+                                <span th:utext="${message.content}"></span>
+                            </p>
+                            <div th:if="${message.cause!=null&&message.cause!=''}" class="home-dacontent"
+                                 th:text="'失败原因:'+${message.cause}">
+
+                            </div>
+                        </li>
+                    </ul>
+                    <div style="text-align: center;" th:utext="${pageStr}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<div th:replace="common/footer.html::#f"></div>
+</body>
+</html>

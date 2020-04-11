@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css"/>
+    <script src="/static/fsLayui/plugins/jquery/jquery.min.js"></script>
+</head>
+<body style="height: 300px;">
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>用户登录</legend>
+</fieldset>
+<form class="layui-form" action="/user/login" method="post" style="text-align: center;">
+    <div class="layui-form-item" style="margin-bottom: 5px">
+        <label class="layui-form-label">用&nbsp;&nbsp;户&nbsp;&nbsp;名</label>
+        <div class="layui-input-inline">
+            <input id="userName" type="text" name="userName" required="true" lay-verify="userName" placeholder="请输入用户名"
+                   autocomplete="off"
+                   class="layui-input" style="width: 280px;">
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-bottom: 5px">
+        <label class="layui-form-label">密&nbsp;&nbsp;码</label>
+        <div class="layui-input-inline">
+            <input id="password" type="password" name="password" required="true" lay-verify="passWord"
+                   placeholder="请输入密码"
+                   autocomplete="off"
+                   class="layui-input" style="width: 280px;">
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="margin-bottom: 5px;text-align: left;">
+        <div class="layui-input-block">
+            <input type="checkbox" id="rememberMe" name="rememberMe" lay-skin="primary" title="记住密码">
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="margin-bottom: 15px;text-align: center">
+        <button class="layui-btn  layui-btn-normal layui-btn-radius" lay-submit="" lay-filter="checkForm"
+                style="width: 300px;">登录
+        </button>
+    </div>
+    <a href="javascript:findPassword()">忘记密码</a>
+
+</form>
+<script src="/static/js/jquery.cookie.js"></script>
+<script src="/static/layui/layui.js"></script>
+<script src="/static/layui/layui.all.js"></script>
+<script>
+    layui.form.verify({
+        userName: [
+            /^[\S]{5,15}$/
+            , "用户名必须为5到15位，且不能出现空格"
+        ],
+        passWord: [
+            /^[\S]{6,18}$/
+            , "密码必须为6到18位，且不能出现空格"
+        ]
+    });
+    layui.use('form', function () {
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(checkForm)', function (data) {
+            //layer.msg(JSON.stringify(data.field));
+            var rememberMe = data.field.rememberMe;
+            var url = '/user/login';
+            var data = $('form').serializeArray();
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                success: function (res) {
+                    if (res.success) {
+                        if (rememberMe == 'on') { //记住密码
+                            $.cookie('user', $("#userName").val().trim() + '-' + $("#password").val().trim(), {expires: 7});  // 7天有效期
+                        } else {
+                            $.cookie("user", null);
+                        }
+                        layer.msg('登录成功！', {
+                            icon: 1,
+                            time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                        }, function () {
+                            //do something
+                            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                            parent.location.reload();
+                            parent.layer.close(index); //再执行关闭
+                        });
+                    } else {
+                        layer.msg(res.errorInfo);
+                    }
+                },
+                error: function (data) {
+                    layer.msg("网络错误！");
+                }
+            });
+            return false;
+        });
+    });
+
+    function findPassword() {
+        var index = parent.layer.getFrameIndex(window.name);
+        //得到当前的iframe索引
+        parent.layer.close(index);      //关闭当前的iframe
+        parent.layer.open({
+            type: 2,
+            title: false,
+            area: ['450px', '370px'], //宽高
+            closeBtn: 1, //不显示关闭按钮
+            scrollbar: false, //禁止浏览器出现滚动条
+            resize: false, //禁止拉伸
+            move: false, //禁止拖拽
+            shade: 0.8, //遮罩
+
+            shadeClose: true, //开启遮罩关闭
+            content: '/user/findPassword.html', //这里content是一个Url
+        });
+
+    }
+
+    $(function () {
+        //从cookie中获取用户名和密码
+        var user = $.cookie("user");
+        if (typeof(user) != 'undefinded' && user != 'null') {
+            var userNameAndpassWord = user.split("-");
+            $("#userName").val(userNameAndpassWord[0]);
+            $("#password").val(userNameAndpassWord[1]);
+            $("#rememberMe").attr("checked", "checker");
+            $("#rememberMe").next().addClass("layui-form-checked");
+        }
+    });
+</script>
+</body>
+</html>

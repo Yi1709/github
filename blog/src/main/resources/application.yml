@@ -1,0 +1,19 @@
+server:
+  port: 8612
+
+spring:
+  thymeleaf:
+    cache: false
+    mode: HTML
+  profiles:
+    active: dev
+  jpa:
+    hibernate:
+      ddl-auto: update
+      show-sql: true
+  messages:
+    basename: i18n/messages
+
+comment.avatar: /images/avatar.jpg
+
+

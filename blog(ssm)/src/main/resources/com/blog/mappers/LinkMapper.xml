@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzw.blog.dao.LinkDao">
+    <resultMap id="LinkResult" type="Link">
+        <result property="id" column="id"></result>
+        <result property="linkName" column="linkName"/>
+        <result property="linkUrl" column="linkUrl"/>
+        <result property="orderNo" column="orderNo"/>
+    </resultMap>
+
+    <select id="findById" parameterType="Integer" resultMap="LinkResult">
+        select * from t_link where  id =#{id};
+    </select>
+
+    <select id="getTotal" parameterType="Map" resultType="Long">
+        select count(*) from  t_link ;
+    </select>
+
+    <select id="list"  parameterType="Map" resultMap="LinkResult">
+        select * from t_link
+        order by orderNo
+        <if test="start!=null and pageSize!=null">
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+
+    <insert id="add" parameterType="Link">
+        insert into t_link values (null ,#{linkName},#{linkUrl},#{orderNo});
+    </insert>
+
+    <update id="update" parameterType="Integer">
+        update t_link
+        <set>
+            <if test="linkUrl!=null and linkUrl!=''">
+                  linkUrl = #{linkUrl},
+            </if>
+            <if test="linkName!=null and linkName!=''">
+                 linkName = #{linkName},
+            </if>
+            <if test="orderNo!=null">
+                orderNo = #{orderNo},
+            </if>
+        </set>
+        where  id =#{id}
+    </update>
+
+    <delete id="delete" parameterType="Integer">
+        delete from t_link where id =#{id}
+    </delete>
+</mapper>

@@ -1,0 +1,35 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<div class="data_list">
+    <div class="data_list_title">
+        <img src="static/images/list_icon.png"/>&nbsp;最新博客
+    </div>
+    <div class="datas">
+        <ul>
+            <c:forEach items="${blogList}" var="blog">
+                <li style="margin-bottom: 40px">
+                    <span class="title">
+					  		<a href="${pageContext.request.contextPath}/blog/articles/${blog.id}.html">${blog.title }</a>
+					  	</span>
+                    <span class="summary">摘要: ${blog.summary }....</span>
+                    <span class="info">
+					  		<font color="#999"><fmt:formatDate value="${blog.releaseDate }" type="date"
+                                                               pattern="yyyy-MM-dd HH:mm"/></font>
+                        &nbsp;&nbsp;阅读(${blog.clickHit})&nbsp;&nbsp;评论(${blog.replyHit})
+					  	</span>
+                </li>
+                <hr style="height:5px;border:none;border-top:1px dashed gray;padding-bottom:10px;"/>
+            </c:forEach>
+        </ul>
+    </div>
+
+    <div style="text-align: center;">
+        <nav>
+            <ul class="pagination pagination-sm">
+               ${pageCode}
+            </ul>
+        </nav>
+    </div>
+</div>
